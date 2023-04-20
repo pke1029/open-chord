@@ -4,9 +4,9 @@ OpenChord is a Python library I am developing to plot beautiful chord diagrams f
 
 ## Installation
 
-I am working on hosting the library on PyPI.org. At the meantime, you can download the `openchord.py` file into your working directory/folder and use it that way. You will also need to install the `drawsvg` library (https://github.com/cduck/drawsvg) using the command
+OpenChord is now on PyPI.org! Install using the command
 ```
-python3 -m pip install "drawsvg[all]"
+python3 -m pip install openchord
 ```
 
 ## Usage
