@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import drawsvg as dw
 
 def pol2cart(rho, phi):
