@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openchord"
+version = "0.1.0"
+authors = [
+    {name = "Kenny Pang", email = "pangkhangee@gmail.com"},
+]
+description = "A library for ploting chord diagrams"
+readme = "README.md"
+requires-python = ">=3.6"
+keywords = ["plot", "data science", "Jupyter", "network", "graph"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "drawsvg",
+    "numpy ~= 1.16"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/pke1029/open-chord"
+

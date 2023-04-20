@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+src/openchord/__init__.py
+src/openchord/openchord.py
+src/openchord.egg-info/PKG-INFO
+src/openchord.egg-info/SOURCES.txt
+src/openchord.egg-info/dependency_links.txt
+src/openchord.egg-info/requires.txt
+src/openchord.egg-info/top_level.txt
