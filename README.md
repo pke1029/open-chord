@@ -26,12 +26,12 @@ fig = oc.Chord(adjacency_matrix, labels)
 fig.show()
 ```
 Color can be changed like so
-```
+```python
 fig.color_map = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
 fig.show()
 ```
 You can export the figure as an .svg file and open it in a vector graphics software such as [Inkscape](https://inkscape.org/)
-```
+```python
 fig.save_svg("figure.svg")
 ```
 ![Chord diagram using OpenChord](https://github.com/pke1029/open-chord/blob/main/figure.png)
