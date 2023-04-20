@@ -1,12 +1,12 @@
 # OpenChord
 
-OpenChord is a Python library I am developing to plot beautiful chord diagrams for free. OpenChord uses the `drawsvg` library and can display figures in a Jupyter notebook or Jupyter lab. Other libraries for drawing chord diagram includes [PlotAPI](https://plotapi.com/) (paid), [Bokeh](https://holoviews.org/reference/elements/bokeh/Chord.html) (visible moire artifact), and [Plotly](https://plotly.com/python/v3/filled-chord-diagram/) (tedious). 
+OpenChord is a Python library I am developing to plot beautiful chord diagrams for visualising networks. OpenChord uses the `drawsvg` library and can display figures in a Jupyter notebook or Jupyter lab. Other libraries for drawing chord diagram includes [PlotAPI](https://plotapi.com/) (paid), [Bokeh](https://holoviews.org/reference/elements/bokeh/Chord.html) (visible moire artifact), and [Plotly](https://plotly.com/python/v3/filled-chord-diagram/) (tedious). 
 
 ## Installation
 
 I am working on hosting the library on PyPI.org. At the meantime, you can download the `openchord.py` file into your working directory/folder and use it that way. You will also need to install the `drawsvg` library (https://github.com/cduck/drawsvg) using the command
 ```
-python3 -m pip install "drawsvg[all]~=2.0"
+python3 -m pip install "drawsvg[all]"
 ```
 
 ## Usage
