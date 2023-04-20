@@ -1,6 +1,6 @@
 # OpenChord
 
-OpenChord is a Python library I am developing to plot beautiful chord diagrams for visualising networks. OpenChord uses the `drawsvg` library and can display figures in a Jupyter notebook or Jupyter lab. Other libraries for drawing chord diagram includes [PlotAPI](https://plotapi.com/) (paid), [Bokeh](https://holoviews.org/reference/elements/bokeh/Chord.html) (visible moire artifact), and [Plotly](https://plotly.com/python/v3/filled-chord-diagram/) (tedious). 
+OpenChord is a Python library I am developing to plot beautiful chord diagrams for visualising networks and graphs. OpenChord uses the `drawsvg` library and can display figures in a Jupyter notebook or Jupyter lab. Other libraries for drawing chord diagram includes [PlotAPI](https://plotapi.com/) (paid), [Bokeh](https://holoviews.org/reference/elements/bokeh/Chord.html) (visible moire artifact), and [Plotly](https://plotly.com/python/v3/filled-chord-diagram/) (tedious). 
 
 ## Installation
 
@@ -11,7 +11,7 @@ python3 -m pip install "drawsvg[all]"
 
 ## Usage
 
-Currently, the function only support a symmetric adjacency matrix (i.e. weighted graph, non-directed)
+Currently, the function only support symmetric adjacency matricies (i.e. weighted graph, non-directed)
 ```python
 import openchord as ocd
 
