@@ -25,7 +25,7 @@ labels = [Emma', 'Isabella', 'Ava', 'Olivia', 'Sophia']
 fig = oc.Chord(adjacency_matrix, labels)
 fig.show()
 ```
-Color can be changed with
+Color can be changed like so
 ```
 fig.color_map = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
 fig.show()
