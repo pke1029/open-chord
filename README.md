@@ -13,7 +13,7 @@ python3 -m pip install "drawsvg[all]"
 
 Currently, the function only support a symmetric adjacency matrix (i.e. weighted graph, non-directed)
 ```python
-import openchord as oc
+import openchord as ocd
 
 adjacency_matrix = [[ 3, 18,  9,  0, 23],
                     [18,  0, 12,  5, 29],
@@ -22,7 +22,7 @@ adjacency_matrix = [[ 3, 18,  9,  0, 23],
                     [23, 29, 10,  0,  0]]
 labels = [Emma', 'Isabella', 'Ava', 'Olivia', 'Sophia']
 
-fig = oc.Chord(adjacency_matrix, labels)
+fig = ocd.Chord(adjacency_matrix, labels)
 fig.show()
 ```
 Color can be changed like so
