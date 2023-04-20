@@ -11,7 +11,7 @@ python3 -m pip install "drawsvg[all]~=2.0"
 
 ## Usage
 
-
+Currently, the function only support a symmetric adjacency matrix (i.e. weighted graph, non-directed)
 ```python
 import openchord as oc
 
