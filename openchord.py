@@ -64,7 +64,16 @@ class Chord:
         self.is_symmetric = is_symmetric(self.data)
         self.ideogram_ends = self.get_ideogram_ends(gap)
         self.ribbon_ends = self.get_ribbon_ends()
-        self.color_map = ['#001d5c', '#50216c', '#892070', '#ba2769', '#e1405a', '#fa6644', '#ff9228', '#ffc000']
+        self._color_map = ['#001d5c', '#50216c', '#892070', '#ba2769', '#e1405a', '#fa6644', '#ff9228', '#ffc000']
+        self.gradients = self.get_gradients()
+
+    @property
+    def color_map(self):
+        return self._color_map
+
+    @color_map.setter
+    def color_map(self, value):
+        self._color_map = value
         self.gradients = self.get_gradients()
         
     def show(self):
