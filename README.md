@@ -20,7 +20,7 @@ adjacency_matrix = [[ 3, 18,  9,  0, 23],
                     [ 9, 12,  0, 27, 10],
                     [ 0,  5, 27,  0,  0],
                     [23, 29, 10,  0,  0]]
-labels = [Emma', 'Isabella', 'Ava', 'Olivia', 'Sophia']
+labels = ['Emma', 'Isabella', 'Ava', 'Olivia', 'Sophia']
 
 fig = ocd.Chord(adjacency_matrix, labels)
 fig.show()
