@@ -34,4 +34,4 @@ You can export the figure as an .svg file and open it in a vector graphics softw
 ```
 fig.save_svg("figure.svg")
 ```
-
+![Chord diagram using OpenChord](https://github.com/pke1029/open-chord/blob/main/figure.png)
