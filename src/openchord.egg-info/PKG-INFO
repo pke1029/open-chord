@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: openchord
-Version: 0.1.1
+Version: 0.1.2
 Summary: A library for ploting chord diagrams
 Author-email: Kenny Pang <pangkhangee@gmail.com>
 Project-URL: Homepage, https://github.com/pke1029/open-chord
@@ -18,9 +18,9 @@ OpenChord is a Python library I am developing to plot beautiful chord diagrams f
 
 ## Installation
 
-I am working on hosting the library on PyPI.org. At the meantime, you can download the `openchord.py` file into your working directory/folder and use it that way. You will also need to install the `drawsvg` library (https://github.com/cduck/drawsvg) using the command
+OpenChord is now on PyPI.org! Install using the command
 ```
-python3 -m pip install "drawsvg[all]"
+python3 -m pip install openchord
 ```
 
 ## Usage
@@ -48,4 +48,4 @@ You can export the figure as an .svg file and open it in a vector graphics softw
 ```python
 fig.save_svg("figure.svg")
 ```
-![Chord diagram using OpenChord](https://github.com/pke1029/open-chord/blob/main/figure.png)
+![Chord diagram using OpenChord](https://github.com/pke1029/open-chord/blob/main/media/figure.png)
