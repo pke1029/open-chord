@@ -157,6 +157,10 @@ class Chord:
     def save_svg(self, filename):
         fig = self.show()
         fig.save_svg(filename)
+
+    def save_png(self, filename):
+        fig = self.show()
+        fig.save_png(filename)
     
     def get_color(self, i):
         n = len(self.color_map)
