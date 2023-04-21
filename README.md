@@ -6,7 +6,7 @@ OpenChord is a Python library I am developing to plot beautiful chord diagrams f
 
 OpenChord is now on PyPI.org! Install using the command
 ```
-python3 -m pip install openchord
+pip install openchord
 ```
 
 ## Usage
