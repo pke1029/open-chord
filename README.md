@@ -35,3 +35,7 @@ You can export the figure as an .svg file and open it in a vector graphics softw
 fig.save_svg("figure.svg")
 ```
 ![Chord diagram using OpenChord](https://raw.githubusercontent.com/pke1029/open-chord/main/media/figure.png)
+
+## More tutorials and examples
+I wrote a few more tutorials available via the link below and in the `/example` directory
+1. [Quick Start](https://github.com/pke1029/open-chord/blob/main/examples/01_quick_start.ipynb)
