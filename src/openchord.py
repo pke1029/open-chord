@@ -1,4 +1,3 @@
-
 import numpy as np
 import drawsvg as dw
 
@@ -51,6 +50,8 @@ def is_symmetric(A):
         return np.allclose(A, A.T)
 
 class Chord:
+
+    colormap_default = ["#FFB6C1", "#FFD700", "#FFA07A", "#90EE90", "#87CEFA", "#DA70D6", "#FF69B4", "#20B2AA"]
     
     def __init__(self, data, labels=[], fig_size=500, radius=200, gap=0.01):
         self.fig_size = fig_size
@@ -66,16 +67,16 @@ class Chord:
         self.is_symmetric = is_symmetric(self.data)
         self.ideogram_ends = self.get_ideogram_ends(gap)
         self.ribbon_ends = self.get_ribbon_ends()
-        self._color_map = ['#001d5c', '#50216c', '#892070', '#ba2769', '#e1405a', '#fa6644', '#ff9228', '#ffc000']
+        self._colormap = self.colormap_default
         self.gradients = self.get_gradients()
 
     @property
-    def color_map(self):
-        return self._color_map
+    def colormap(self):
+        return self._colormap
 
-    @color_map.setter
-    def color_map(self, value):
-        self._color_map = value
+    @colormap.setter
+    def colormap(self, value):
+        self._colormap = value
         self.gradients = self.get_gradients()
         
     def show(self):
@@ -165,6 +166,11 @@ class Chord:
         fig.save_png(filename)
     
     def get_color(self, i):
-        n = len(self.color_map)
-        return self.color_map[i % n]
-        
+        n = len(self.colormap)
+        return self.colormap[i % n]
+
+    def show_colormap(self):
+        swatch = dw.Drawing(66*len(self.colormap), 60)
+        for i,col in enumerate(self.colormap):
+            swatch.append(dw.Rectangle(i*(66), 0, 60, 60, fill=self.colormap[i]))
+        return swatch
