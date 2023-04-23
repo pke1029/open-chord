@@ -1,3 +1,4 @@
 dist/
 src/openchord.egg-info/
 src/__pycache__
+examples/.ipynb_checkpoints
