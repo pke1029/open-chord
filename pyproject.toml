@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openchord"
-version = "0.1.4"
+dynamic = ["version"]
 authors = [
     {name = "Kenny Pang", email = "pangkhangee@gmail.com"},
 ]
@@ -18,10 +18,13 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "drawsvg~=2.0",
+    "drawsvg ~= 2.0",
     "numpy ~= 1.16"
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/pke1029/open-chord"
+
+[tool.setuptools.dynamic]
+version = {attr = "openchord.__version__"}
 
