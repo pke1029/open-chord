@@ -52,20 +52,24 @@ def is_symmetric(A):
 class Chord:
 
     colormap_default = ["#FFB6C1", "#FFD700", "#FFA07A", "#90EE90", "#87CEFA", "#DA70D6", "#FF69B4", "#20B2AA"]
+    colormap_vibrant = ["#FF6B6B", "#F9844A", "#F9C74F", "#90BE6D", "#43AA8B", "#4D908E", "#577590", "#277DA1"]
     
-    def __init__(self, data, labels=[], fig_size=500, radius=200, gap=0.01):
-        self.fig_size = fig_size
+    def __init__(self, data, labels=[], radius=200, gap_size=0.01):
         self.data = np.array(data)
         self.labels = labels
         self.radius = radius
+        self.padding = 50
+        self.font_size = 10
+        self.font_family = "Arial"
+        self._gap_size = gap_size
+        self.bg_color = "#ffffff"
+        self.bg_transparancy = 1.0
         self.shape = self.data.shape[0]
         self.row_sum = np.sum(self.data, axis=0)
         self.total = np.sum(self.data)
-        self.gap = gap
-        self.font_size = 10
-        self.conversion_rate = (2*np.pi-gap*self.shape)/self.total
+        self.conversion_rate = (2*np.pi-self.gap_size*self.shape)/self.total
         self.is_symmetric = is_symmetric(self.data)
-        self.ideogram_ends = self.get_ideogram_ends(gap)
+        self.ideogram_ends = self.get_ideogram_ends()
         self.ribbon_ends = self.get_ribbon_ends()
         self._colormap = self.colormap_default
         self.gradients = self.get_gradients()
@@ -78,9 +82,23 @@ class Chord:
     def colormap(self, value):
         self._colormap = value
         self.gradients = self.get_gradients()
+
+    @property
+    def gap_size(self):
+        return self._gap_size
+
+    @gap_size.setter
+    def gap_size(self, value):
+        self._gap_size = value
+        self.conversion_rate = (2*np.pi-self.gap_size*self.shape)/self.total
+        self.ideogram_ends = self.get_ideogram_ends()
+        self.ribbon_ends = self.get_ribbon_ends()
         
     def show(self):
-        fig = dw.Drawing(self.fig_size, self.fig_size, origin='center')
+        fig_size = 2*(self.radius + self.padding)
+        fig = dw.Drawing(fig_size, fig_size, origin='center')
+        # background
+        fig.append(dw.Rectangle(-0.5*fig_size, -0.5*fig_size, fig_size, fig_size, fill=self.bg_color, fill_opacity=self.bg_transparancy))
         # make ideogram
         for i,v in enumerate(self.ideogram_ends):
             fig.append(arc(self.radius, v[0], v[1], color=self.get_color(i)))
@@ -99,17 +117,17 @@ class Chord:
                 anchor = "end"
             else:
                 anchor = "start"
-            fig.append(dw.Text(v, font_size=self.font_size, x=r, y=0, text_anchor=anchor, dominant_baseline='middle', transform=f"rotate(%f)"%(-angle)))
+            fig.append(dw.Text(v, font_size=self.font_size, x=r, y=0, text_anchor=anchor, dominant_baseline='middle', transform=f"rotate(%f)"%(-angle), font_family=self.font_family))
         return fig
     
-    def get_ideogram_ends(self, gap):
+    def get_ideogram_ends(self):
         arc_lens = self.row_sum * self.conversion_rate
         ideogram_ends = []
         left = 0 
         for arc_len in arc_lens:
             right = left + arc_len
             ideogram_ends.append([left, right])
-            left = right + gap
+            left = right + self.gap_size
         return np.array(ideogram_ends)
     
     def get_ribbon_ends(self):
