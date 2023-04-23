@@ -15,12 +15,12 @@ Currently, the function only support symmetric adjacency matricies (i.e. weighte
 ```python
 import openchord as ocd
 
-adjacency_matrix = [[ 0,  1,  1,  1,  4],
-                    [ 1,  0,  1,  7,  2],
-                    [ 1,  1,  0,  5, 10],
-                    [ 1,  7,  5,  0,  2],
-                    [ 4,  2, 10,  2,  0]]
-labels = ['Laplus', 'Lui', 'Koyori', 'Chloe', 'Iroha']
+adjacency_matrix = [[ 3, 18,  9,  0, 23],
+                    [18,  0, 12,  5, 29],
+                    [ 9, 12,  0, 27, 10],
+                    [ 0,  5, 27,  0,  0],
+                    [23, 29, 10,  0,  0]]
+labels = ['Emma', 'Isabella', 'Ava', 'Olivia', 'Sophia']
 
 fig = ocd.Chord(adjacency_matrix, labels)
 fig.show()
@@ -35,7 +35,3 @@ You can export the figure as an .svg file and open it in a vector graphics softw
 fig.save_svg("figure.svg")
 ```
 ![Chord diagram using OpenChord](https://raw.githubusercontent.com/pke1029/open-chord/main/media/figure.png)
-
-## More tutorials and examples
-I wrote a few more tutorials available via the link below and in the `/example` directory
-1. [Quick Start](https://github.com/pke1029/open-chord/blob/main/examples/01_quick_start.ipynb)
