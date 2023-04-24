@@ -39,10 +39,7 @@ fig.save_svg("figure.svg")
 ![Chord diagram using OpenChord](https://raw.githubusercontent.com/pke1029/open-chord/main/media/figure.png)
 
 ## More tutorials and examples
-I wrote a few more tutorials available via the link below and in the `/examples` directory
-
-
-
+I wrote a few more tutorials available via the link below and in the `/examples` directory. Feel free to download them and run it yourself. 
 
 1. [Quick Start](https://github.com/pke1029/open-chord/blob/main/examples/01_quick_start.ipynb)
    * First chord diagram
@@ -53,7 +50,7 @@ I wrote a few more tutorials available via the link below and in the `/examples`
    * Gap size
    * Background color and transparancy
 
-2. [The Logo](https://github.com/pke1029/open-chord/blob/main/examples/02_the_logo.ipynb)
+2. [The Logo](https://github.com/pke1029/open-chord/blob/main/examples/02_the_logo.ipynb) (The text is not centered vertically when viewed on GitHub)
    * Rotation
    * Custom plot area
    * Gradient style
