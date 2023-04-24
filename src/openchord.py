@@ -1,12 +1,15 @@
 import numpy as np
 import drawsvg as dw
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
 
 def pol2cart(rho, phi):
     x = rho * np.cos(phi)
     y = rho * np.sin(phi)
     return x, -y
+
+def norm(x, y):
+    return np.sqrt(x*x+y*y)
 
 def get_arc(radius, start_angle, end_angle):
     # calculate coords
@@ -76,6 +79,7 @@ class Chord:
         self.bg_color = "#ffffff"
         self.bg_transparancy = 1.0
         self.shape = self.matrix.shape[0]
+        self.pairs = self.get_pairs()
         self.row_sum = np.sum(self.matrix, axis=1)
         self.total = np.sum(self.matrix)
         self.conversion_rate = (2*np.pi-self.gap_size*self.shape)/self.total
@@ -166,7 +170,7 @@ class Chord:
         for i,v in enumerate(self.labels):
             midpoint = np.mean(self.ideogram_ends[i,:])
             x, y = pol2cart(self.radius, midpoint)
-            r = np.sqrt(x*x+y*y) * (1.0+self.text_position)
+            r = norm(x, y) * (1.0+self.text_position)
             angle = midpoint * 180.0/np.pi
             if midpoint > 0.5*np.pi and midpoint < 1.5*np.pi:
                 r *= -1
@@ -194,7 +198,16 @@ class Chord:
             for j in range(i+1, n):
                 if self.matrix[i,j] != 0:
                     upper.append([i,j])
-        pairs = {"upper": upper}
+        diag = []
+        for i in range(n):
+            if self.matrix[i,i] != 0:
+                diag.append(i)
+        lower = []
+        for i in range(n):
+            for j in range(i):
+                if self.matrix[i,j] != 0:
+                    lower.append([i,j])
+        pairs = {"upper": upper, "diag":diag, "lower":lower}
         return pairs
     
     def get_ribbon_ends(self):
@@ -205,13 +218,12 @@ class Chord:
             regions[i,0] = self.ideogram_ends[i,0]
             regions[i,1:n+1] = self.ideogram_ends[i,0] + np.cumsum(np.roll(arc_lens[i,::-1], i+1))
         ribbon_ends = []
-        for i in range(n):
-            ribbon_ends.append([regions[i,0], regions[i,1], regions[i,0], regions[i,1]]) # diagonal terms
-        for i in range(n):
-            for j in range(i+1, n):
-                k = n-j+i
-                l = j-i
-                ribbon_ends.append([regions[i,k], regions[i,k+1], regions[j,l], regions[j,l+1]])
+        for i in self.pairs["diag"]:
+            ribbon_ends.append([regions[i,0], regions[i,1], regions[i,0], regions[i,1]]) 
+        for i,j in self.pairs["upper"]:
+            k = n-j+i
+            l = j-i
+            ribbon_ends.append([regions[i,k], regions[i,k+1], regions[j,l], regions[j,l+1]])
         return ribbon_ends
     
     def get_gradients(self):
@@ -219,40 +231,34 @@ class Chord:
         idx = 0
         # diagonal terms
         n = self.shape
-        for i in range(n):
+        for i in self.pairs["diag"]:
             gradients.append(self.get_color(i))
             idx += 1
         if self.gradient_style == "midpoint":
-            for i in range(n):
-                for j in range(i+1, n):
-                    a0, a1, a2, a3 = self.ribbon_ends[idx]
-                    x0, y0 = pol2cart(self.radius, 0.5*(a0+a1))
-                    x1, y1 = pol2cart(self.radius, 0.5*(a2+a3))
-                    g = dw.LinearGradient(x0, y0, x1, y1)
-                    g.add_stop(0, self.get_color(i))
-                    g.add_stop(1, self.get_color(j))
-                    gradients.append(g)
-                    idx += 1
+            for i,j in self.pairs["upper"]:
+                a0, a1, a2, a3 = self.ribbon_ends[idx]
+                x0, y0 = pol2cart(self.radius, 0.5*(a0+a1))
+                x1, y1 = pol2cart(self.radius, 0.5*(a2+a3))
+                g = dw.LinearGradient(x0, y0, x1, y1)
+                g.add_stop(0, self.get_color(i))
+                g.add_stop(1, self.get_color(j))
+                gradients.append(g)
+                idx += 1
         else:
-            # default gradient 
-            for i in range(n):
-                for j in range(i+1, n):
-                    a0, a1, a2, a3 = self.ribbon_ends[idx]
-                    if i == 0 and j == n-1:
-                        x0, y0 = pol2cart(self.radius, a1)
-                        x1, y1 = pol2cart(self.radius, a2)
-                    elif np.abs(a3-a0) > np.abs(a2-a1):
-                        x0, y0 = pol2cart(self.radius, a0)
-                        x1, y1 = pol2cart(self.radius, a3)
-                    else:
-                        x0, y0 = pol2cart(self.radius, a1)
-                        x1, y1 = pol2cart(self.radius, a2)
-                    # create gradient
-                    g = dw.LinearGradient(x0, y0, x1, y1)
-                    g.add_stop(0, self.get_color(i))
-                    g.add_stop(1, self.get_color(j))
-                    gradients.append(g)
-                    idx += 1
+            for i,j in self.pairs["upper"]:
+                a0, a1, a2, a3 = self.ribbon_ends[idx]
+                x0, y0 = pol2cart(self.radius, a0)
+                x1, y1 = pol2cart(self.radius, a1)
+                x2, y2 = pol2cart(self.radius, a2)
+                x3, y3 = pol2cart(self.radius, a3)
+                if norm(x0-x3, y0-y3) > norm(x1-x2, y1-y2):
+                    g = dw.LinearGradient(x0, y0, x3, y3)
+                else:
+                    g = dw.LinearGradient(x1, y1, x2, y2)
+                g.add_stop(0, self.get_color(i))
+                g.add_stop(1, self.get_color(j))
+                gradients.append(g)
+                idx += 1
         return gradients
     
     def save_svg(self, filename):
