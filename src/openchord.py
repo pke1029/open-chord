@@ -62,7 +62,7 @@ class Chord:
     colormap_default = ["#FFB6C1", "#FFD700", "#FFA07A", "#90EE90", "#87CEFA", "#DA70D6", "#FF69B4", "#20B2AA"]
     colormap_vibrant = ["#FF6B6B", "#F9844A", "#F9C74F", "#90BE6D", "#43AA8B", "#4D908E", "#577590", "#277DA1"]
     
-    def __init__(self, data, labels=[], radius=200, gap_size=0.01):
+    def __init__(self, data, labels=[], radius=200):
         self.matrix = np.array(data)
         self.labels = labels
         self._radius = radius
@@ -70,7 +70,7 @@ class Chord:
         self.plot_area = self.get_plot_area()
         self.font_size = 10
         self.font_family = "Arial"
-        self._gap_size = gap_size
+        self._gap_size = 0.01
         self.ribbon_gap = 0.01
         self.ribbon_stiffness = 0.6
         self._rotation = 0
