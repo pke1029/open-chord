@@ -39,7 +39,7 @@ fig.save_svg("figure.svg")
 ![Chord diagram using OpenChord](https://raw.githubusercontent.com/pke1029/open-chord/main/media/figure.png)
 
 ## More tutorials and examples
-I wrote a few more tutorials available via the link below and in the `/example` directory
+I wrote a few more tutorials available via the link below and in the `/examples` directory
 
 
 
@@ -51,7 +51,7 @@ I wrote a few more tutorials available via the link below and in the `/example` 
    * Font size and font family
    * Colormap
    * Gap size
-   * Background color and 
+   * Background color and transparancy
 
 2. [The Logo](https://github.com/pke1029/open-chord/blob/main/examples/02_the_logo.ipynb)
    * Rotation
