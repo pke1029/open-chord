@@ -1,7 +1,7 @@
 import numpy as np
 import drawsvg as dw
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 
 def pol2cart(rho, phi):
     x = rho * np.cos(phi)
@@ -19,12 +19,14 @@ def arc(radius, start_angle, end_angle, color="black", opacity=0.9, thickness=0.
     k = 1.0 + thickness
     x1, y1, x2, y2 = get_arc(radius, start_angle, end_angle)
     x3, y3, x4, y4 = k*x2, k*y2, k*x1, k*y1
+    # arc direction
+    large_arc = 1 if end_angle-start_angle > np.pi else 0
     # create path 
     p = dw.Path(fill=color, fill_opacity=opacity)
     p.M(x1, y1)
-    p.A(radius, radius, rot=0, large_arc=0, sweep=0, ex=x2, ey=y2)
+    p.A(radius, radius, rot=0, large_arc=large_arc, sweep=0, ex=x2, ey=y2)
     p.L(x3, y3)
-    p.A(k*radius, k*radius, rot=0, large_arc=0, sweep=1, ex=x4, ey=y4).Z()
+    p.A(k*radius, k*radius, rot=0, large_arc=large_arc, sweep=1, ex=x4, ey=y4).Z()
     return p
 
 def ribbon(radius, source_a1, source_a2, target_a1, target_a2, color="black", opacity=0.6, control_strength=0.6):
@@ -32,12 +34,15 @@ def ribbon(radius, source_a1, source_a2, target_a1, target_a2, color="black", op
     x3, y3, x4, y4 = get_arc(radius, target_a1, target_a2)
     k = 1.0 - control_strength
     xctr1, yctr1, xctr2, yctr2, xctr3, yctr3, xctr4, yctr4 = k*x1, k*y1, k*x2, k*y2, k*x3, k*y3, k*x4, k*y4
+    # arc direction
+    source_large_arc = 1 if source_a2 - source_a1 > np.pi else 0
+    target_large_arc = 1 if target_a2 - target_a1 > np.pi else 0
     # define path
     p = dw.Path(fill=color, fill_opacity=opacity)
     p.M(x1, y1)
-    p.A(radius, radius, rot=0, large_arc=0, sweep=0, ex=x2, ey=y2)
+    p.A(radius, radius, rot=0, large_arc=source_large_arc, sweep=0, ex=x2, ey=y2)
     p.C(xctr2, yctr2, xctr3, yctr3, x3, y3)
-    p.A(radius, radius, rot=0, large_arc=0, sweep=0, ex=x4, ey=y4)
+    p.A(radius, radius, rot=0, large_arc=target_large_arc, sweep=0, ex=x4, ey=y4)
     p.C(xctr4, yctr4, xctr1, yctr1, x1, y1)
     p.Z()
     return p
@@ -55,23 +60,30 @@ class Chord:
     colormap_vibrant = ["#FF6B6B", "#F9844A", "#F9C74F", "#90BE6D", "#43AA8B", "#4D908E", "#577590", "#277DA1"]
     
     def __init__(self, data, labels=[], radius=200, gap_size=0.01):
-        self.data = np.array(data)
+        self.matrix = np.array(data)
         self.labels = labels
-        self.radius = radius
-        self.padding = 50
+        self._radius = radius
+        self._padding = 50
+        self.plot_area = self.get_plot_area()
         self.font_size = 10
         self.font_family = "Arial"
         self._gap_size = gap_size
+        self.ribbon_gap = 0.01
+        self.ribbon_stiffness = 0.6
+        self._rotation = 0
+        self.arc_thickness = 0.07
+        self.text_position = 0.1
         self.bg_color = "#ffffff"
         self.bg_transparancy = 1.0
-        self.shape = self.data.shape[0]
-        self.row_sum = np.sum(self.data, axis=0)
-        self.total = np.sum(self.data)
+        self.shape = self.matrix.shape[0]
+        self.row_sum = np.sum(self.matrix, axis=1)
+        self.total = np.sum(self.matrix)
         self.conversion_rate = (2*np.pi-self.gap_size*self.shape)/self.total
-        self.is_symmetric = is_symmetric(self.data)
+        self.is_symmetric = is_symmetric(self.matrix)
         self.ideogram_ends = self.get_ideogram_ends()
         self.ribbon_ends = self.get_ribbon_ends()
         self._colormap = self.colormap_default
+        self._gradient_style = "default"
         self.gradients = self.get_gradients()
 
     @property
@@ -93,23 +105,68 @@ class Chord:
         self.conversion_rate = (2*np.pi-self.gap_size*self.shape)/self.total
         self.ideogram_ends = self.get_ideogram_ends()
         self.ribbon_ends = self.get_ribbon_ends()
+        self.gradients = self.get_gradients()
+
+    @property
+    def rotation(self):
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value):
+        self._rotation = value
+        self.ideogram_ends = self.get_ideogram_ends()
+        self.ribbon_ends = self.get_ribbon_ends()
+        self.gradients = self.get_gradients()
+
+    @property
+    def gradient_style(self):
+        return self._gradient_style
+
+    @gradient_style.setter
+    def gradient_style(self, value):
+        self._gradient_style = value
+        self.gradients = self.get_gradients()
+
+    @property
+    def radius(self):
+        return self._radius
+    
+    @radius.setter
+    def radius(self, value):
+        self._radius = value
+        self.plot_area = self.get_plot_area()
+
+    @property
+    def padding(self):
+        return self._padding
+
+    @padding.setter
+    def padding(self, value):
+        self._padding = value
+        self.plot_area = self.get_plot_area()
+    
+    def get_plot_area(self):
+        x = -self.radius-self.padding
+        y = x
+        w = 2.0*(self.radius+self.padding)
+        h = w
+        return {"x":x, "y":y, "w":w, "h":h}
         
     def show(self):
-        fig_size = 2*(self.radius + self.padding)
-        fig = dw.Drawing(fig_size, fig_size, origin='center')
+        fig = dw.Drawing(self.plot_area["w"], self.plot_area["h"], origin=(self.plot_area["x"], self.plot_area["y"]))
         # background
-        fig.append(dw.Rectangle(-0.5*fig_size, -0.5*fig_size, fig_size, fig_size, fill=self.bg_color, fill_opacity=self.bg_transparancy))
+        fig.append(dw.Rectangle(self.plot_area["x"], self.plot_area["y"], self.plot_area["w"], self.plot_area["h"], fill=self.bg_color, fill_opacity=self.bg_transparancy))
         # make ideogram
         for i,v in enumerate(self.ideogram_ends):
-            fig.append(arc(self.radius, v[0], v[1], color=self.get_color(i)))
+            fig.append(arc(self.radius, v[0], v[1], color=self.get_color(i), thickness=self.arc_thickness))
         # make ribbon
         for i,v in enumerate(self.ribbon_ends):
-            fig.append(ribbon(self.radius*0.99, v[0], v[1], v[2], v[3], color=self.gradients[i]))
+            fig.append(ribbon(self.radius*(1.0-self.ribbon_gap), v[0], v[1], v[2], v[3], color=self.gradients[i], control_strength=self.ribbon_stiffness))
         # draw labels
         for i,v in enumerate(self.labels):
             midpoint = np.mean(self.ideogram_ends[i,:])
             x, y = pol2cart(self.radius, midpoint)
-            r = np.sqrt(x*x+y*y) * 1.1
+            r = np.sqrt(x*x+y*y) * (1.0+self.text_position)
             angle = midpoint * 180.0/np.pi
             if midpoint > 0.5*np.pi and midpoint < 1.5*np.pi:
                 r *= -1
@@ -123,16 +180,26 @@ class Chord:
     def get_ideogram_ends(self):
         arc_lens = self.row_sum * self.conversion_rate
         ideogram_ends = []
-        left = 0 
+        left = self.rotation
         for arc_len in arc_lens:
             right = left + arc_len
             ideogram_ends.append([left, right])
             left = right + self.gap_size
         return np.array(ideogram_ends)
+
+    def get_pairs(self):
+        n = self.shape
+        upper = []
+        for i in range(n):
+            for j in range(i+1, n):
+                if self.matrix[i,j] != 0:
+                    upper.append([i,j])
+        pairs = {"upper": upper}
+        return pairs
     
     def get_ribbon_ends(self):
         n = self.shape
-        arc_lens = self.data * self.conversion_rate
+        arc_lens = self.matrix * self.conversion_rate
         regions = np.zeros((n, n+1))
         for i in range(n):
             regions[i,0] = self.ideogram_ends[i,0]
@@ -155,24 +222,37 @@ class Chord:
         for i in range(n):
             gradients.append(self.get_color(i))
             idx += 1
-        for i in range(n):
-            for j in range(i+1, n):
-                a0, a1, a2, a3 = self.ribbon_ends[idx]
-                if i == 0 and j == n-1:
-                    x0, y0 = pol2cart(self.radius, a1)
-                    x1, y1 = pol2cart(self.radius, a2)
-                elif np.abs(a3-a0) > np.abs(a2-a1):
-                    x0, y0 = pol2cart(self.radius, a0)
-                    x1, y1 = pol2cart(self.radius, a3)
-                else:
-                    x0, y0 = pol2cart(self.radius, a1)
-                    x1, y1 = pol2cart(self.radius, a2)
-                # create gradient
-                g = dw.LinearGradient(x0, y0, x1, y1)
-                g.add_stop(0, self.get_color(i))
-                g.add_stop(1, self.get_color(j))
-                gradients.append(g)
-                idx += 1
+        if self.gradient_style == "midpoint":
+            for i in range(n):
+                for j in range(i+1, n):
+                    a0, a1, a2, a3 = self.ribbon_ends[idx]
+                    x0, y0 = pol2cart(self.radius, 0.5*(a0+a1))
+                    x1, y1 = pol2cart(self.radius, 0.5*(a2+a3))
+                    g = dw.LinearGradient(x0, y0, x1, y1)
+                    g.add_stop(0, self.get_color(i))
+                    g.add_stop(1, self.get_color(j))
+                    gradients.append(g)
+                    idx += 1
+        else:
+            # default gradient 
+            for i in range(n):
+                for j in range(i+1, n):
+                    a0, a1, a2, a3 = self.ribbon_ends[idx]
+                    if i == 0 and j == n-1:
+                        x0, y0 = pol2cart(self.radius, a1)
+                        x1, y1 = pol2cart(self.radius, a2)
+                    elif np.abs(a3-a0) > np.abs(a2-a1):
+                        x0, y0 = pol2cart(self.radius, a0)
+                        x1, y1 = pol2cart(self.radius, a3)
+                    else:
+                        x0, y0 = pol2cart(self.radius, a1)
+                        x1, y1 = pol2cart(self.radius, a2)
+                    # create gradient
+                    g = dw.LinearGradient(x0, y0, x1, y1)
+                    g.add_stop(0, self.get_color(i))
+                    g.add_stop(1, self.get_color(j))
+                    gradients.append(g)
+                    idx += 1
         return gradients
     
     def save_svg(self, filename):
