@@ -1,5 +1,7 @@
 # OpenChord
 
+<img src="https://raw.githubusercontent.com/pke1029/open-chord/main/media/logo.svg" width="360" height="100">
+
 OpenChord is a Python library I am developing to plot beautiful chord diagrams for visualising networks and graphs. OpenChord uses the `drawsvg` library and can display figures in a Jupyter notebook or Jupyter lab. Other libraries for drawing chord diagram includes [PlotAPI](https://plotapi.com/) (paid), [Bokeh](https://holoviews.org/reference/elements/bokeh/Chord.html) (visible moire artifact), and [Plotly](https://plotly.com/python/v3/filled-chord-diagram/) (tedious). 
 
 ## Installation
@@ -38,4 +40,25 @@ fig.save_svg("figure.svg")
 
 ## More tutorials and examples
 I wrote a few more tutorials available via the link below and in the `/example` directory
+
+
+
+
 1. [Quick Start](https://github.com/pke1029/open-chord/blob/main/examples/01_quick_start.ipynb)
+   * First chord diagram
+   * Radius
+   * Padding
+   * Font size and font family
+   * Colormap
+   * Gap size
+   * Background color and 
+
+2. [The Logo](https://github.com/pke1029/open-chord/blob/main/examples/02_the_logo.ipynb)
+   * Rotation
+   * Custom plot area
+   * Gradient style
+   * Arc thickness
+   * Text position
+   * Ribbon gap
+   * Ribbon stiffness
+   * Save as SVG
