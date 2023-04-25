@@ -1,7 +1,7 @@
 import numpy as np
 import drawsvg as dw
 
-__version__ = "0.1.7"
+__version__ = "0.1.8"
 
 def pol2cart(rho, phi):
     x = rho * np.cos(phi)
@@ -57,6 +57,12 @@ def is_symmetric(A):
             return False
         return np.allclose(A, A.T)
 
+# cyclic list class
+class Cyclic(list):
+
+    def __getitem__(self, index):
+        return super(Cyclic, self).__getitem__(index % len(self))
+
 class Chord:
 
     colormap_default = ["#FFB6C1", "#FFD700", "#FFA07A", "#90EE90", "#87CEFA", "#DA70D6", "#FF69B4", "#20B2AA"]
@@ -86,7 +92,7 @@ class Chord:
         self.is_symmetric = is_symmetric(self.matrix)
         self.ideogram_ends = self.get_ideogram_ends()
         self.ribbon_ends = self.get_ribbon_ends()
-        self._colormap = self.colormap_default
+        self._colormap = Cyclic(self.colormap_default)
         self._gradient_style = "default"
         self.gradients = self.get_gradients()
 
@@ -96,7 +102,7 @@ class Chord:
 
     @colormap.setter
     def colormap(self, value):
-        self._colormap = value
+        self._colormap = Cyclic(value)
         self.gradients = self.get_gradients()
 
     @property
@@ -162,7 +168,7 @@ class Chord:
         fig.append(dw.Rectangle(self.plot_area["x"], self.plot_area["y"], self.plot_area["w"], self.plot_area["h"], fill=self.bg_color, fill_opacity=self.bg_transparancy))
         # make ideogram
         for i,v in enumerate(self.ideogram_ends):
-            fig.append(arc(self.radius, v[0], v[1], color=self.get_color(i), thickness=self.arc_thickness))
+            fig.append(arc(self.radius, v[0], v[1], color=self.colormap[i], thickness=self.arc_thickness))
         # make ribbon
         for i,v in enumerate(self.ribbon_ends):
             fig.append(ribbon(self.radius*(1.0-self.ribbon_gap), v[0], v[1], v[2], v[3], color=self.gradients[i], control_strength=self.ribbon_stiffness))
@@ -230,7 +236,7 @@ class Chord:
         # diagonal terms
         n = self.shape
         for i in self.pairs["diag"]:
-            gradients.append(self.get_color(i))
+            gradients.append(self.colormap[i])
             idx += 1
         if self.gradient_style == "midpoint":
             for i,j in self.pairs["upper"]:
@@ -238,8 +244,8 @@ class Chord:
                 x0, y0 = pol2cart(self.radius, 0.5*(a0+a1))
                 x1, y1 = pol2cart(self.radius, 0.5*(a2+a3))
                 g = dw.LinearGradient(x0, y0, x1, y1)
-                g.add_stop(0, self.get_color(i))
-                g.add_stop(1, self.get_color(j))
+                g.add_stop(0, self.colormap[i])
+                g.add_stop(1, self.colormap[j])
                 gradients.append(g)
                 idx += 1
         else:
@@ -253,8 +259,8 @@ class Chord:
                     g = dw.LinearGradient(x0, y0, x3, y3)
                 else:
                     g = dw.LinearGradient(x1, y1, x2, y2)
-                g.add_stop(0, self.get_color(i))
-                g.add_stop(1, self.get_color(j))
+                g.add_stop(0, self.colormap[i])
+                g.add_stop(1, self.colormap[j])
                 gradients.append(g)
                 idx += 1
         return gradients
@@ -266,13 +272,10 @@ class Chord:
     def save_png(self, filename):
         fig = self.show()
         fig.save_png(filename)
-    
-    def get_color(self, i):
-        n = len(self.colormap)
-        return self.colormap[i % n]
 
     def show_colormap(self):
         swatch = dw.Drawing(66*len(self.colormap), 60)
         for i,col in enumerate(self.colormap):
             swatch.append(dw.Rectangle(i*(66), 0, 60, 60, fill=self.colormap[i]))
         return swatch
+
