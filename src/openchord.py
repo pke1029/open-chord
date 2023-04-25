@@ -194,19 +194,17 @@ class Chord:
     def get_pairs(self):
         n = self.shape
         upper = []
-        for i in range(n):
-            for j in range(i+1, n):
-                if self.matrix[i,j] != 0:
-                    upper.append([i,j])
         diag = []
-        for i in range(n):
-            if self.matrix[i,i] != 0:
-                diag.append(i)
         lower = []
         for i in range(n):
-            for j in range(i):
+            for j in range(n):
                 if self.matrix[i,j] != 0:
-                    lower.append([i,j])
+                    if i == j:
+                        diag.append(i)
+                    elif i < j:
+                        upper.append([i,j])
+                    else:
+                        lower.append([i,j])
         pairs = {"upper": upper, "diag":diag, "lower":lower}
         return pairs
     
