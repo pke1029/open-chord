@@ -13,7 +13,7 @@ pip install openchord
 
 ## Usage
 
-Currently, the function only support symmetric adjacency matricies (i.e. weighted graph, non-directed)
+The chord diagram is defined by an adjacency matricies (possibly non-symmetric)
 ```python
 import openchord as ocd
 
@@ -47,7 +47,6 @@ I wrote a few more tutorials available via the link below and in the `/examples`
    * Padding
    * Font size and font family
    * Colormap
-   * Gap size
    * Background color and transparancy
 
 2. [The Logo](https://github.com/pke1029/open-chord/blob/main/examples/02_the_logo.ipynb) (The text is not centered vertically when viewed on GitHub)
@@ -56,6 +55,7 @@ I wrote a few more tutorials available via the link below and in the `/examples`
    * Gradient style
    * Arc thickness
    * Text position
+   * Gap size
    * Ribbon gap
    * Ribbon stiffness
    * Save as SVG
