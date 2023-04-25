@@ -50,6 +50,19 @@ def ribbon(radius, source_a1, source_a2, target_a1, target_a2, color="black", op
     p.Z()
     return p
 
+def label(t, radius, angle, font_size=10, font_family="Arial"):
+    angle = np.mod(angle, 2*np.pi)
+    angle = angle * 180.0/np.pi
+    # left half
+    if angle > 90 and angle < 270:
+        radius *= -1
+        angle = -(180.0-angle)
+        anchor = "end"
+    # right half
+    else:
+        anchor = "start"
+    return dw.Text(t, font_size=font_size, x=radius, y=0, text_anchor=anchor, dominant_baseline='middle', transform=f"rotate(%f)"%(-angle), font_family=font_family)
+
 def is_symmetric(A):
         A = np.array(A)
         m, n = A.shape
@@ -175,16 +188,7 @@ class Chord:
         # draw labels
         for i,v in enumerate(self.labels):
             midpoint = np.mean(self.ideogram_ends[i,:])
-            x, y = pol2cart(self.radius, midpoint)
-            r = norm(x, y) * (1.0+self.text_position)
-            angle = midpoint * 180.0/np.pi
-            if midpoint > 0.5*np.pi and midpoint < 1.5*np.pi:
-                r *= -1
-                angle = -(180.0-angle)
-                anchor = "end"
-            else:
-                anchor = "start"
-            fig.append(dw.Text(v, font_size=self.font_size, x=r, y=0, text_anchor=anchor, dominant_baseline='middle', transform=f"rotate(%f)"%(-angle), font_family=self.font_family))
+            fig.append(label(v, self.radius*(1.0+self.text_position), midpoint, font_size=self.font_size, font_family=self.font_family))
         return fig
     
     def get_ideogram_ends(self):
