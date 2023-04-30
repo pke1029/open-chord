@@ -50,18 +50,18 @@ def ribbon(radius, source_a1, source_a2, target_a1, target_a2, color="black", op
     p.Z()
     return p
 
-def label(t, radius, angle, font_size=10, font_family="Arial"):
+def label(t, radius, angle, font_size=10, font_family="Arial", font_color="black", anchor=""):
     angle = np.mod(angle, 2*np.pi)
     angle = angle * 180.0/np.pi
     # left half
     if angle > 90 and angle < 270:
         radius *= -1
         angle = -(180.0-angle)
-        anchor = "end"
+        anchor = anchor or "end"
     # right half
     else:
-        anchor = "start"
-    return dw.Text(t, font_size=font_size, x=radius, y=0, text_anchor=anchor, dominant_baseline='middle', transform=f"rotate(%f)"%(-angle), font_family=font_family)
+        anchor = anchor or "start"
+    return dw.Text(t, font_size=font_size, x=radius, y=0, text_anchor=anchor, dominant_baseline='middle', transform=f"rotate(%f)"%(-angle), font_family=font_family, fill=font_color)
 
 def is_symmetric(A):
         A = np.array(A)
@@ -101,13 +101,14 @@ class Chord:
         self.pairs = self.get_pairs()
         self.row_sum = np.sum(self.matrix, axis=1)
         self.total = np.sum(self.matrix)
-        self.conversion_rate = (2*np.pi-self.gap_size*self.shape)/self.total
+        self.conversion_rate = self.get_conversion_rate()
         self.is_symmetric = is_symmetric(self.matrix)
         self.ideogram_ends = self.get_ideogram_ends()
         self.ribbon_ends = self.get_ribbon_ends()
         self._colormap = Cyclic(self.colormap_default)
         self._gradient_style = "default"
         self.gradients = self.get_gradients()
+        self.display_value = False
 
     @property
     def colormap(self):
@@ -189,8 +190,16 @@ class Chord:
         for i,v in enumerate(self.labels):
             midpoint = np.mean(self.ideogram_ends[i,:])
             fig.append(label(v, self.radius*(1.0+self.text_position), midpoint, font_size=self.font_size, font_family=self.font_family))
+        # values
+        if self.display_value:
+            for i,v in enumerate(self.row_sum):
+                midpoint = np.mean(self.ideogram_ends[i,:])
+                fig.append(label(str(int(v)), self.radius*(1.0+0.5*self.arc_thickness), midpoint, font_size=10, font_family=self.font_family, anchor='middle', font_color="white"))
         return fig
     
+    def get_conversion_rate(self):
+        return (2*np.pi-self.gap_size*self.shape)/self.total
+
     def get_ideogram_ends(self):
         arc_lens = self.row_sum * self.conversion_rate
         ideogram_ends = []
@@ -283,3 +292,26 @@ class Chord:
             swatch.append(dw.Rectangle(i*(66), 0, 60, 60, fill=self.colormap[i]))
         return swatch
 
+
+class Split(Chord):
+
+    def __init__(self, matrix, labels=[], split_loc=1):
+        self.split_loc = split_loc
+        self.split_gap = 0.5
+        Chord.__init__(self, matrix, labels) 
+
+    def get_conversion_rate(self):
+        return (2*np.pi-self.gap_size*self.shape-4.0*self.split_gap)/self.total
+    
+    def get_ideogram_ends(self):
+        arc_lens = self.row_sum * self.conversion_rate
+        ideogram_ends = []
+        left = np.pi/2.0 + self.split_gap 
+        for i, arc_len in enumerate(arc_lens):
+            if i == self.split_loc :
+                left += 2.0*self.split_gap
+            right = left + arc_len
+            ideogram_ends.append([left, right])
+            left = right + self.gap_size
+            
+        return np.array(ideogram_ends)
