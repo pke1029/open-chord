@@ -1,7 +1,7 @@
 import numpy as np
 import drawsvg as dw
 
-__version__ = "0.1.8"
+__version__ = "0.1.9"
 
 def pol2cart(rho, phi):
     x = rho * np.cos(phi)
