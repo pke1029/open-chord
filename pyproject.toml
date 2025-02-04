@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "openchord"
 dynamic = ["version"]
 authors = [
-    {name = "Kenny Pang", email = "pangkhangee@gmail.com"},
+    { name = "Kenny Pang", email = "pangkhangee@gmail.com" },
 ]
 description = "A library for ploting chord diagrams"
 readme = "README.md"
@@ -18,13 +18,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "drawsvg ~= 2.0",
-    "numpy ~= 1.16"
+    "drawsvg ~= 2.0", 
+    "numpy ~= 2.2"
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/pke1029/open-chord"
 
 [tool.setuptools.dynamic]
-version = {attr = "openchord.__version__"}
-
+version = { attr = "openchord.__version__" }
